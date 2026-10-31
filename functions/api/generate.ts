@@ -8,9 +8,18 @@ const IMAGE_MODEL = '@cf/black-forest-labs/flux-1-schnell'
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } })
 }
-function extractText(result: any): string {
+function extractText(result: unknown, depth = 0): string {
   if (typeof result === 'string') return result
-  return result?.response ?? result?.result?.response ?? result?.output_text ?? ''
+  if (!result || typeof result !== 'object' || depth > 4) return ''
+  if (Array.isArray(result)) return result.map(value => extractText(value, depth + 1)).find(Boolean) || ''
+
+  const record = result as Record<string, unknown>
+  if (Array.isArray(record.recipes)) return JSON.stringify(record)
+  for (const key of ['response', 'result', 'output_text', 'text', 'content', 'choices']) {
+    const text = extractText(record[key], depth + 1)
+    if (text) return text
+  }
+  return ''
 }
 function parseRecipes(text: string): Recipe[] {
   const cleaned = text.replace(/```json|```/gi, '').trim()
@@ -58,7 +67,9 @@ Use difficulty apenas Fácil, Médio ou Avançado.`
       max_tokens: 2600,
       temperature: 0.7
     })
-    const recipes = parseRecipes(extractText(textResult))
+    const responseText = extractText(textResult)
+    if (!responseText) throw new Error('A IA retornou uma resposta vazia ou em formato inesperado. Tente novamente.')
+    const recipes = parseRecipes(responseText)
     if (recipes.length !== 3) throw new Error('Não foi possível criar as três receitas. Tente novamente.')
 
     // Gera as três imagens antes de devolver as opções, para que o usuário compare os pratos.

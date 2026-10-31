@@ -19,20 +19,19 @@ Aplicação web de receitas com IA: informe ingredientes, preferências e receba
 
 ## Executar localmente
 
-```bash
-npm install
-npx wrangler login
-npm run dev
-```
-
-O Vite serve o frontend, mas a API `/api/generate` é uma Pages Function. Para testar a integração real localmente, gere o build e rode Pages Dev com o binding AI:
+No PowerShell do Windows:
 
 ```bash
-npm run build
-npx wrangler pages dev dist --ai AI
+npm.cmd install
+npx.cmd wrangler login
+npm.cmd run dev
 ```
 
-Abra a URL indicada pelo Wrangler (normalmente http://localhost:8788).
+O login abre o navegador para autorizar o Wrangler; não é necessário criar um token manual. O comando `dev` compila o frontend e inicia o Pages Dev com a Function `/api/generate` e o binding `AI`, em `http://127.0.0.1:8788`. Depois de editar o frontend, reinicie o comando para gerar um novo build.
+
+Em outros terminais, use `npm install`, `npx wrangler login` e `npm run dev`.
+
+> **Atenção:** chamadas à IA em desenvolvimento local usam sua conta Cloudflare e podem gerar cobrança. O Wrangler informa no terminal quando o binding `AI` está conectado ao recurso remoto.
 
 ## Publicar no Cloudflare Pages
 
@@ -47,8 +46,8 @@ Abra a URL indicada pelo Wrangler (normalmente http://localhost:8788).
 6. Para deploy pelo terminal:
 
 ```bash
-npx wrangler login
-npm run deploy
+npx.cmd wrangler login
+npm.cmd run deploy
 ```
 
 ## API
