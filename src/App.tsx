@@ -167,7 +167,7 @@ export default function App() {
           <button className="outline-button" onClick={() => setView('results')}><ArrowLeft size={16}/> Ver outras receitas</button>
         </section>
       )}
-      <footer><a className="brand" href="#"><span className="brand-mark"><ChefHat size={18}/></span><span>receita<span className="brand-ai">ai</span></span></a><span>FEITO COM CRIATIVIDADE E UM POUCO DE INTELIGÊNCIA ARTIFICIAL.</span><span>© 2026 RECEITAAI</span></footer>
+      <footer><a className="brand" href="#"><span className="brand-mark"><ChefHat size={18}/></span><span>receita<span className="brand-ai">ai</span></span></a><span>FEITO COM CRIATIVIDADE E UM POUCO DE INTELIGÊNCIA ARTIFICIAL.</span><span>Desenvolvido por Sandra Negrisoli</span><span>© 2026 RECEITAAI</span></footer>
     </main>
   )
 }
