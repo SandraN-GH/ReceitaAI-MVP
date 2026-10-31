@@ -5,7 +5,7 @@ Aplicação web de receitas com IA: informe ingredientes, preferências e receba
 ## Stack
 
 - React + Vite + TypeScript
-- Cloudflare Pages Functions (API serverless)
+- Cloudflare Workers Static Assets (SPA e API Worker)
 - Cloudflare Workers AI: Llama 3.3 para receitas e FLUX.1 Schnell para imagens
 - Lucide React e CSS responsivo
 
@@ -27,23 +27,19 @@ npx.cmd wrangler login
 npm.cmd run dev
 ```
 
-O login abre o navegador para autorizar o Wrangler; não é necessário criar um token manual. O comando `dev` compila o frontend e inicia o Pages Dev com a Function `/api/generate` e o binding `AI`, em `http://127.0.0.1:8788`. Depois de editar o frontend, reinicie o comando para gerar um novo build.
+O login abre o navegador para autorizar o Wrangler; não é necessário criar um token manual. O comando `dev` compila o frontend e inicia o Worker com a rota `/api/generate` e o binding `AI`, em `http://127.0.0.1:8787`. Depois de editar o frontend, reinicie o comando para gerar um novo build.
 
 Em outros terminais, use `npm install`, `npx wrangler login` e `npm run dev`.
 
 > **Atenção:** chamadas à IA em desenvolvimento local usam sua conta Cloudflare e podem gerar cobrança. O Wrangler informa no terminal quando o binding `AI` está conectado ao recurso remoto.
 
-## Publicar no Cloudflare Pages
+## Publicar no Cloudflare Workers
 
 1. Crie/acesse sua conta em https://dash.cloudflare.com/.
-2. No painel, abra **Workers & Pages** e crie um projeto Pages conectado ao repositório GitHub (ou use deploy via Wrangler).
-3. Para integração via Git:
-   - Framework preset: **Vite**
-   - Build command: `npm run build`
-   - Build output directory: `dist`
-4. O `wrangler.toml` deste repositório declara `pages_build_output_dir` e o binding `AI`.
-5. Confirme em **Settings → Bindings** que existe um binding **Workers AI** com variável `AI`. Se necessário, adicione-o e faça novo deploy.
-6. Para deploy pelo terminal:
+2. No painel, conecte o Worker `receitaai-mvp` ao repositório GitHub.
+3. Configure o build command como `npm run build` e o deploy command como `npx wrangler deploy`.
+4. O `wrangler.jsonc` configura os assets em `dist`, a rota SPA, o Worker da API e o binding Workers AI `AI`.
+5. Para deploy pelo terminal:
 
 ```bash
 npx.cmd wrangler login
@@ -77,7 +73,7 @@ Configurados em `functions/api/generate.ts`:
 Confira a disponibilidade, eventuais substituições, limites e preço dos modelos na documentação oficial:
 - https://developers.cloudflare.com/workers-ai/models/
 - https://developers.cloudflare.com/workers-ai/
-- https://developers.cloudflare.com/pages/functions/bindings/
+- https://developers.cloudflare.com/workers/static-assets/binding/
 
 ## Estrutura
 
@@ -90,13 +86,14 @@ receitaai/
 │   ├── App.tsx
 │   ├── main.tsx
 │   ├── styles.css
-│   └── types.ts
+│   ├── types.ts
+│   └── worker.ts
 ├── index.html
 ├── package.json
 ├── tsconfig.app.json
 ├── tsconfig.json
 ├── vite.config.ts
-└── wrangler.toml
+└── wrangler.jsonc
 ```
 
 ## Antes de produção

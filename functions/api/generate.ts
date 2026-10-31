@@ -1,4 +1,4 @@
-interface Env { AI: { run(model: string, input: Record<string, unknown>): Promise<unknown> } }
+export interface GenerateEnv { AI: { run(model: string, input: Record<string, unknown>): Promise<unknown> } }
 interface RecipeIngredient { name: string; quantity: string; available: boolean }
 interface Recipe { id: number; name: string; description: string; prepTime: number; difficulty: string; servings: number; ingredients: RecipeIngredient[]; steps: string[]; tips: string; image?: string }
 
@@ -42,7 +42,7 @@ function parseRecipes(text: string): Recipe[] {
   }))
 }
 
-export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
+export async function handleGenerate(request: Request, env: GenerateEnv): Promise<Response> {
   try {
     const body = await request.json() as { ingredients?: unknown; avoid?: unknown; time?: unknown; diet?: unknown }
     if (!Array.isArray(body.ingredients)) return json({ error: 'Informe uma lista de ingredientes.' }, 400)
@@ -95,5 +95,3 @@ Use difficulty apenas Fácil, Médio ou Avançado.`
     return json({ error: error instanceof Error ? error.message : 'Erro interno ao gerar receitas.' }, 500)
   }
 }
-
-export const onRequestOptions: PagesFunction = async () => new Response(null, { status: 204 })
